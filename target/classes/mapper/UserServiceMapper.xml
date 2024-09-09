@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cs183.tasty.mapper.UserServiceMapper">
+    <resultMap id="BaseResultMap" type="com.cs183.tasty.entity.pojo.User">
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="CHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="place" column="place" jdbcType="VARCHAR"/>
+        <result property="resume" column="resume" jdbcType="VARCHAR"/>
+        <result property="portrait" column="portrait" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,user_name,phone,
+        sex,create_time,status,
+        password,update_time,place,
+        resume,portrait
+    </sql>
+</mapper>
