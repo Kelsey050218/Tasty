@@ -105,75 +105,7 @@ public class SmsServiceImpl implements SmsService {
         }
     }
 
-    //Send verification code
-    @Override
-    public boolean sendCode(String phone, String code) throws ClientException {
-        //Set the timeout period
-        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
-        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
-        //Initialize ascClient
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou",
-                smsCodeProperty.accessKeyID, smsCodeProperty.accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou",
-                "Dysmsapi", "dysmsapi.aliyuncs.com");
-        IAcsClient acsClient = new DefaultAcsClient(profile);
-        //Assemble request object
-        SendSmsRequest request = new SendSmsRequest();
-        request.setPhoneNumbers(phone);
-        request.setSignName(smsCodeProperty.signName);
-        if (redisTemplate.hasKey("R_VERIFY_CODE")){
-            request.setTemplateCode(smsCodeProperty.templateId_R);
-        }else if (redisTemplate.hasKey("F_VERIFY_CODE")){
-            request.setTemplateCode(smsCodeProperty.templateId_F);
-        }
-        request.setTemplateParam("{\"code\":\"" + code + "\"}");
-        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
-        //Check whether the SMS message is successfully sent
-        if (sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
-            System.out.println("SMS sent successfully！");
-            return true;
-        } else {
-            System.out.println("SMS sent failure！");
-            return false;
-        }
-        /*Config config = new com.aliyun.teaopenapi.models.Config()
-                // 必填，请确保代码运行环境设置了环境变量 ALIBABA_CLOUD_ACCESS_KEY_ID。
-                .setAccessKeyId(System.getenv("LTAI5tRWfNNxbn7c5PRUH3Cz"))
-                // 必填，请确保代码运行环境设置了环境变量 ALIBABA_CLOUD_ACCESS_KEY_SECRET。
-                .setAccessKeySecret(System.getenv("ZQqr85w3gbmsGPTtta4G4jNPHObxYH"));
-        // Endpoint 请参考 https://api.aliyun.com/product/Dysmsapi
-        config.endpoint = "dysmsapi.aliyuncs.com";
-        Client client = new Client(config);
-        SendSmsRequest sendSmsRequest = new SendSmsRequest()
-                .setSignName("tasty1")
-                .setTemplateCode(smsCodeProperty.templateId)
-                .setPhoneNumbers(phone)
-                .setTemplateParam("{\"code\":\"" + code + "\"}");
-        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-        try {
-            // 复制代码运行请自行打印 API 的返回值
-            client.sendSmsWithOptions(sendSmsRequest, runtime);
-        } catch (TeaException error) {
-            // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
-            // 错误 message
-            System.out.println(error.getMessage());
-            // 诊断地址
-            System.out.println(error.getData().get("Recommend"));
-            com.aliyun.teautil.Common.assertAsString(error.message);
-            return false;
-        } catch (Exception _error) {
-            TeaException error = new TeaException(_error.getMessage(), _error);
-            // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
-            // 错误 message
-            System.out.println(error.getMessage());
-            // 诊断地址
-            System.out.println(error.getData().get("Recommend"));
-            com.aliyun.teautil.Common.assertAsString(error.message);
-            return false;
-        }
-        return true;*/
-    }
-
+    
     @Override
     public boolean forgetVerifyCode(String veifyCode, String code) {
         veifyCode = (String) redisTemplate.opsForValue().get(KEY_F);
