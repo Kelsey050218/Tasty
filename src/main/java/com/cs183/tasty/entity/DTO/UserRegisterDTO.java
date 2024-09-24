@@ -14,12 +14,15 @@ import java.io.Serializable;
         private String password;
         @JsonProperty("phone")
         private String phone;
+        @JsonProperty("code")
+        private String code;
 
     @Override
     public String toString() {
-        return "userName=" + userName  +
-                ", password=" + password +
-                ", phone=" + phone ;
+        return "userName= " + userName  +
+                ", password= " + password +
+                ", phone= " + phone +
+                ", code= " + code;
     }
 }
 
