@@ -5,12 +5,10 @@ import com.cs183.tasty.context.BaseContext;
 import com.cs183.tasty.entity.DTO.CommentDTO;
 import com.cs183.tasty.entity.DTO.NoteDTO;
 import com.cs183.tasty.entity.DTO.PageQueryDTO;
+import com.cs183.tasty.entity.DTO.ReportDTO;
 import com.cs183.tasty.entity.Vo.NoteVo;
 import com.cs183.tasty.entity.pojo.*;
-import com.cs183.tasty.mapper.CommentMapper;
-import com.cs183.tasty.mapper.LikeMapper;
-import com.cs183.tasty.mapper.NoteMapper;
-import com.cs183.tasty.mapper.RecipeMapper;
+import com.cs183.tasty.mapper.*;
 import com.cs183.tasty.service.NoteService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -23,6 +21,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.cs183.tasty.constant.MessageConstant.NO_PERMISSION;
 
 @Service
 public class NoteServiceImpl implements NoteService {
@@ -39,6 +40,9 @@ public class NoteServiceImpl implements NoteService {
     @Autowired
     private LikeMapper likeMapper;
 
+    @Autowired
+    private ReportMapper reportMapper;
+
 
 
     @Override
@@ -53,7 +57,11 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws Exception {
+        Long userId = noteMapper.getUserId(id);
+        if(!Objects.equals(userId, BaseContext.getCurrentId())){
+            throw new Exception(NO_PERMISSION);
+        }
         noteMapper.deleteById(id);
     }
 
@@ -125,5 +133,16 @@ public class NoteServiceImpl implements NoteService {
         NoteWrapper.selectAll(Note.class);
         NoteWrapper.in("note_id", NoteIds);
         return noteMapper.selectList(NoteWrapper);
+    }
+
+    @Override
+    public void report(ReportDTO reportDTO) {
+        Report report = new Report();
+        BeanUtils.copyProperties(reportDTO,report);
+        report.setReportStatus(0);
+        report.setReportUserId(BaseContext.getCurrentId());
+        report.setCreatTime(LocalDateTime.now());
+//        reportMapper.addReport(report);
+        reportMapper.insert(report);
     }
 }

@@ -1,5 +1,6 @@
 package com.cs183.tasty.mapper;
 
+import com.cs183.tasty.entity.pojo.Report;
 import com.cs183.tasty.entity.pojo.UserInfo;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.cs183.tasty.entity.pojo.User;

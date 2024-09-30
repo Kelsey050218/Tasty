@@ -81,7 +81,7 @@ public class RecipeServiceImpl implements RecipeService {
         Set<Integer> numbers = new HashSet<>();
         Random random = new Random();
         while (numbers.size() < 5) {
-            int randomNumber = random.nextInt(allRecipes.size() + 1);
+            int randomNumber = random.nextInt(allRecipes.size());
             numbers.add(randomNumber);
         }
         for (int index : numbers) {
@@ -106,6 +106,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+
     public void collect(Long id) {
         Collect collect = new Collect();
         collect.setRecipeId(id);

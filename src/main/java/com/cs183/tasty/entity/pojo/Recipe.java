@@ -42,5 +42,4 @@ public class Recipe implements Serializable {
     @TableField(value = "name")
     private String name;
 
-
 }

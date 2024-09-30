@@ -8,7 +8,6 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.cs183.tasty.entity.DTO.UserRegisterDTO;
 import com.cs183.tasty.entity.pojo.User;
 import com.cs183.tasty.mapper.UserServiceMapper;
 import com.cs183.tasty.properties.SmsCodeProperty;

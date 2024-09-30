@@ -32,4 +32,7 @@ public class Note {
 
     @TableField(value = "note_time")
     private LocalDateTime noteTime;
+
+    @TableField(value = "status")
+    private Integer status;//笔记状态，0为待审核，1为正常，2为异常
 }

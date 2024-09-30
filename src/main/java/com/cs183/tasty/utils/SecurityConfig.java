@@ -6,6 +6,7 @@ import com.cs183.tasty.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -70,8 +71,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 配置授权规则指定user/login路径.允许匿名访问(未登录可访问已登陆不能访问). 其他路径需要身份认证
                 .authorizeHttpRequests(auth -> auth
-                        .antMatchers("/user/login","/user/code","/user/register")
-                        .permitAll()
+                        .antMatchers("/common/login","/common/code","/user/register","/admin/register").permitAll()
+                        // 允许访问的静态资源
+                        .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
+                        // 允许访问 Swagger 相关的 URL
+                        .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
+                        .antMatchers("/admin/handleReport/{id}").hasRole("admin")
                         .anyRequest()
                         .authenticated())
                 // 添加JWT认证过滤器

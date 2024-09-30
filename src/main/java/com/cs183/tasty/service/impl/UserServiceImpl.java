@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cs183.tasty.constant.MessageConstant;
 import com.cs183.tasty.entity.DTO.ForgetDTO;
 import com.cs183.tasty.entity.DTO.UserRegisterDTO;
-import com.cs183.tasty.entity.DTO.UserLoginDTO;
 import com.cs183.tasty.entity.pojo.*;
 import com.cs183.tasty.mapper.MenuMapper;
 import com.cs183.tasty.mapper.MotivationMapper;
@@ -60,71 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
     private MenuMapper menuMapper;
 
     @Override
-    public String userLogin(UserLoginDTO userLoginDTO) {
-
-        //1.封装Authentication对象
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userLoginDTO.getUsername(),userLoginDTO.getPassword());
-        //2.通过AuthenticationManager的authenticate方法来进行用户认证
-        Authentication authenticated =
-                authenticationManager.authenticate(authenticationToken);
-
-        //3.从authenticated拿到用户信息
-        LoginUser loginUser = (LoginUser) authenticated.getPrincipal();
-
-        String userId = loginUser.getUser().getUserId().toString();
-        //4.认证通过生成token
-        String token = JwtUtil.createJWT(userId);
-
-        //5.用户信息存入redis
-        redisTemplate.opsForValue().set(LOGIN_USER_KEY + userId,loginUser);
-        //6.把token返回给前端
-        return token;
-
-
-//        String username = userLoginDTO.getUsername();
-//        String password = userLoginDTO.getPassword();
-//        MPJQueryWrapper<User> wrapper = new MPJQueryWrapper<>();
-//        wrapper.selectAll(User.class)
-//                .eq("user_name", username);
-//        //1、Query the data in the database based on the user name
-//        User user = userServiceMapper.selectOne(wrapper);
-//        //2、Handle various exceptions
-//        if (user == null) {
-//            //Account does not exist
-//            return UserLoginVo.builder()
-//                    .info(ACCOUNT_NOT_FOUND)
-//                    .build();
-//        }
-//        if (!password.equals(user.getPassword())) {
-//            //Password error
-//            return UserLoginVo.builder()
-//                    .info(PASSWORD_ERROR)
-//                    .build();
-//        }
-//        if (user.getStatus() == 0) {
-//            //Account status abnormal
-//            return UserLoginVo.builder()
-//                    .info(ACCOUNT_LOCKED)
-//                    .build();
-//        }
-//        //Generate a jwt token for the user
-//        Map<String, Object> claims = new HashMap<>();
-//        claims.put(jwtClaimsConstant.USER_ID, user.getUserId());
-//        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
-//        UserLoginVo userLoginVO = UserLoginVo.builder()
-//                .userId(user.getUserId())
-//                .status(1)
-//                .token(token)
-//                .info(LOGIN_SUCCESSFUL)
-//                .build();
-//        //Returns the user object
-//        return userLoginVO;
-    }
-
-    @Override
     public void userRegister(UserRegisterDTO userRegisterDTO) throws Exception {
-        String code = (String) redisTemplate.opsForValue().get(VERIFY_CODE);
         //Determine whether the user exists
         String username = userRegisterDTO.getUserName();
         MPJQueryWrapper<User> wrapper = new MPJQueryWrapper<>();
@@ -136,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
             throw new Exception(ALREADY_EXISTS);
         }
         //Check verification code
-        code = (String) redisTemplate.opsForValue().get(VERIFY_CODE);
+        String code = (String) redisTemplate.opsForValue().get(VERIFY_CODE);
         if(StrUtil.isBlank(code)){
             throw new Exception(NUMBER_CODE_EXPIRED);
         }
@@ -146,7 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
             BeanUtils.copyProperties(userRegisterDTO,newUser);
             newUser.setCreateTime(LocalDateTime.now());
             userServiceMapper.insert(newUser);
-            menuMapper.bondRole(newUser.getUserId());
+            menuMapper.bondUserRole(newUser.getUserId());
         }else{
             redisTemplate.delete(VERIFY_CODE);
             throw new Exception(NUMBER_CODE_NOT_EQUAL);
@@ -217,15 +152,5 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
             redisTemplate.opsForValue().set(KEY_M, motivation.getSentence(), 60 * 60 * 24);
             return motivation.getSentence();
         }
-    }
-
-    @Override
-    public void logout() {
-        //获取SecurityContextHolder中的用户id
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        Long userId = loginUser.getUser().getUserId();
-        //删除redis中的用户信息
-        redisTemplate.delete(LOGIN_USER_KEY + userId);
     }
 }

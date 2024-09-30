@@ -165,7 +165,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.cs183.tasty.TastyApplication</mainClass>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
                 <executions>
                     <execution>

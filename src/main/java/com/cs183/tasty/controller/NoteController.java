@@ -2,16 +2,14 @@ package com.cs183.tasty.controller;
 
 import com.cs183.tasty.common.PageResult;
 import com.cs183.tasty.common.Result;
-import com.cs183.tasty.entity.DTO.CommentDTO;
-import com.cs183.tasty.entity.DTO.NoteDTO;
-import com.cs183.tasty.entity.DTO.PageQueryDTO;
-import com.cs183.tasty.entity.DTO.RecipeDTO;
+import com.cs183.tasty.entity.DTO.*;
 import com.cs183.tasty.entity.Vo.NoteVo;
 import com.cs183.tasty.entity.pojo.Comment;
 import com.cs183.tasty.entity.pojo.Note;
 import com.cs183.tasty.service.NoteService;
 import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public Result<String> delete(@RequestParam Long id) {
+    public Result<String> delete(@RequestParam Long id) throws Exception {
         noteService.delete(id);
         return Result.ok();
     }
@@ -70,4 +68,11 @@ public class NoteController {
         List<Note> likeNotes = noteService.getLike();
         return Result.ok(likeNotes);
     }
+
+    @RequestMapping(value = "/report", method = RequestMethod.POST)
+    public Result<Object> reportNote(@RequestBody ReportDTO reportDTO){
+        noteService.report(reportDTO);
+        return Result.ok();
+    }
+
 }

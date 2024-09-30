@@ -17,11 +17,7 @@ class TastyApplicationTests {
 
     @Autowired
     private RedisTemplate redisTemplate;
-    @Test
-    public void testSentCode(@Autowired SmsServiceImpl smsServiceImpl) throws Exception {
-        String phone = "18960935500";
-        smsServiceImpl.sendCode(phone);
-    }
+
 
 //    @Test
 //    public void testVerifyCode(){

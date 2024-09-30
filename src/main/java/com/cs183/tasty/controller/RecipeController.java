@@ -10,6 +10,7 @@ import com.cs183.tasty.entity.pojo.Recipe;
 import com.cs183.tasty.service.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +23,12 @@ public class RecipeController {
     @Autowired
     private RecipeService recipeService;
 
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public Result<RecipeVo> search(@RequestBody RecipeDTO recipeDTO) {
         RecipeVo recipeVo = recipeService.search(recipeDTO);
         if (recipeVo == null) {
-            return Result.fail("No recipe found");
+            return Result.fail(MessageConstant.NO_RECIPES_FOUND);
         } else {
             return Result.ok(recipeVo);
         }
@@ -59,5 +61,6 @@ public class RecipeController {
         List<Recipe> list = recipeService.getCollect();
         return Result.ok(list);
     }
+
 }
 
