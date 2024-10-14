@@ -1,0 +1,67 @@
+server:
+  port: 8082
+
+
+spring:
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://47.96.235.248:3306/tasty
+      username: root
+      password: 123456
+  redis:
+    host: 47.96.235.248
+    port: 6379
+    database: 1
+    lettuce:
+      pool:
+        max-active: 8  #最大连接
+        max-idle: 8   #最大空闲连接
+        min-idle: 0   #最小空闲连接
+        max-wait: 100ms #连接等待时间
+
+# mybatis-plus??
+mybatis-plus:
+  # ????MyBatis????
+  check-config-location: false
+  # MyBatis??????
+  config-location:
+  # MyBaits???????
+  type-aliases-package: com.cs183.tasty.entity
+  # Mapper????XML???? ???classpath*:/mapper/**/*.xml?
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  # TypeHandler????
+  type-handlers-package:
+  configuration:
+    # ????
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # ????????????
+    map-underscore-to-camel-case: true
+    # ??Mybatis????????true
+    cache-enabled: true
+  global-config:
+    # ???mybatis-plus?logo
+    banner: true
+    db-config:
+      # ????????
+      id-type: auto
+      # ??????
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+tasty:
+  sms:
+    accessKeyID: LTAI5tNMJpWgnBYvAYxEebh9
+    accessKeySecret: dhiVu7S6N6cLyJ5CsksOzxTKJ3cGwl
+    signName: tasty
+    templateId_R: "SMS_465920663"
+    templateId_F: "SMS_467605472"
+  alioss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: LTAI5tNMJpWgnBYvAYxEebh9
+    access-key-secret: dhiVu7S6N6cLyJ5CsksOzxTKJ3cGwl
+    bucket-name: kelsey-webdemo
+
+
+
+
