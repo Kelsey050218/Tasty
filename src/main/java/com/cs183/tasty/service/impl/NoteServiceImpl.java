@@ -344,6 +344,5 @@ public class NoteServiceImpl implements NoteService {
             stringRedisTemplate.opsForHash().putAll(key, responseMap);
             return responses;
         }
-
     }
 }
