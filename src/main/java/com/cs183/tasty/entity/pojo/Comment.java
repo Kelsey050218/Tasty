@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -31,4 +31,7 @@ public class Comment implements Serializable {
 
     @TableField(value = "remark")
     private String remark;
+
+    @TableField(exist = false)
+    private List<Response> responses;
 }

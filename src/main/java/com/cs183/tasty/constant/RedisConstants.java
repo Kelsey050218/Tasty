@@ -9,6 +9,7 @@ public class RedisConstants {
     public static final String FANS_USER = "fans:userId:";
     public static final String CLICK_NOTE = "click:note";
     public static final String LIKE_NOTE = "like:noteId:";
+    public static final String RESPONSE_COMMENT = "response:commentId:";
     public static final String COMMENT_NOTE = "comment:noteId:";
     public static final Long VERIFY_CODE_TTL= 1L;
     public static final Long LOGIN_USER_TTL = 36000L;

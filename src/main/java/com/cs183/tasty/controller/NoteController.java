@@ -6,17 +6,12 @@ import com.cs183.tasty.entity.DTO.*;
 import com.cs183.tasty.entity.Vo.NoteVo;
 import com.cs183.tasty.entity.pojo.Comment;
 import com.cs183.tasty.entity.pojo.Note;
+import com.cs183.tasty.entity.pojo.Response;
 import com.cs183.tasty.service.NoteService;
-import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/note")
@@ -103,7 +98,19 @@ public class NoteController {
         return Result.ok(noteList);
     }
 
-    //TODO：回复评论
+    //回复评论
+    @RequestMapping(value = "/comment/response/{id}")
+    public Result<Object> commentResponse(@PathVariable Long id, @RequestParam String response){
+        noteService.addResponse(id,response);
+        return Result.ok();
+    }
+
+    //查看评论详情
+    @RequestMapping(value = "/comment/details/{id}")
+    public Result<List<Response>> getCommentById(@PathVariable Long id){
+        List<Response> responseList = noteService.getResponses(id);
+        return Result.ok(responseList);
+    }
 
 
 }

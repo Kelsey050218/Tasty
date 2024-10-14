@@ -1,6 +1,5 @@
 package com.cs183.tasty.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cs183.tasty.common.PageResult;
 import com.cs183.tasty.context.BaseContext;
@@ -49,7 +48,6 @@ public class NoteServiceImpl implements NoteService {
 
     /**
      * 新增笔记
-     * @param noteDTO
      */
     @Override
     public void addNote(NoteDTO noteDTO) {
@@ -292,5 +290,60 @@ public class NoteServiceImpl implements NoteService {
                     .orderByDesc("note_time");
         }
         return noteMapper.selectList(queryWrapper);
+    }
+
+    /**
+     * 新增回复
+     * @param id
+     * @param content
+     */
+    @Override
+    public void addResponse(Long id, String content) {
+        Long userId = BaseContext.getCurrentId();
+        String key = RESPONSE_COMMENT + id;
+        //先更新数据库
+        Response response = new Response();
+        response.setCommentId(id);
+        response.setContent(content);
+        response.setUserId(userId);
+        response.setCreatedTime(LocalDateTime.now());
+        Comment comment = commentMapper.selectById(id);
+        comment.getResponses().add(response);
+        //再删除redis的key
+        stringRedisTemplate.delete(key);
+    }
+
+
+    @Override
+    public List<Response> getResponses(Long id) {
+        String key = RESPONSE_COMMENT + id;
+        //先查缓存
+        if(Boolean.TRUE.equals(stringRedisTemplate.hasKey(key))){
+            Map<Object, Object> responseMap = stringRedisTemplate.opsForHash().entries(key);
+            List<Response> responses = new ArrayList<>();
+            for (Map.Entry<Object, Object> entry : responseMap.entrySet()) {
+                Response response = new Response();
+                response.setUserId(Long.valueOf((String) entry.getKey()));
+                response.setContent((String) entry.getValue());
+                responses.add(response);
+            }
+            return responses;
+
+        }else{
+            //Key不存在去查数据库
+            Comment comment = commentMapper.selectById(id);
+            List<Response> responses = comment.getResponses();
+            //更新缓存
+            //回复者id做key，回复内容做value，用hash结构
+            Map<Long, String> responseMap = new HashMap<>();
+            // 将每个回复的 userId 和 content 放入 Map
+            for (Response response : responses) {
+                responseMap.put(response.getUserId(), response.getContent());
+            }
+            // 将 Map 存储到 Redis Hash
+            stringRedisTemplate.opsForHash().putAll(key, responseMap);
+            return responses;
+        }
+
     }
 }

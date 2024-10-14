@@ -6,10 +6,14 @@ import com.cs183.tasty.entity.DTO.PageQueryDTO;
 import com.cs183.tasty.entity.DTO.ReportDTO;
 import com.cs183.tasty.entity.Vo.NoteVo;
 import com.cs183.tasty.entity.pojo.Note;
+import com.cs183.tasty.entity.pojo.Comment;
+import com.cs183.tasty.entity.pojo.Recipe;
+import com.cs183.tasty.entity.pojo.Response;
 
 import java.util.List;
 
 public interface NoteService {
+
     void addNote(NoteDTO noteDTO);
 
     void delete(Long id) throws Exception;
@@ -31,4 +35,8 @@ public interface NoteService {
     List<Note> rank();
 
     List<Note> conditionSearch(String describe, int year);
+
+    void addResponse(Long id, String response);
+
+    List<Response> getResponses(Long id);
 }

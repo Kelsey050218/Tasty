@@ -1,7 +1,6 @@
 package com.cs183.tasty.mapper;
 
 import com.cs183.tasty.entity.pojo.Comment;
-import com.cs183.tasty.entity.pojo.Ingredient;
 import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
