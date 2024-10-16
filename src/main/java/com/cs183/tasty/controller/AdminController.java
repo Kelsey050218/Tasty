@@ -17,6 +17,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    //管理员注册
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public Result<Object> register(@RequestBody AdminRegisterDTO adminRegisterDTO) throws Exception {
         log.info("User Register：{}",adminRegisterDTO.getPassword());
@@ -24,11 +25,21 @@ public class AdminController {
         return Result.ok();
     }
 
+    //处理被举报笔记
     @RequestMapping(value = "/handleReport/{id}", method = RequestMethod.PUT)
     public Result<Object> handleReport(@PathVariable Long id,@RequestParam Integer isSuccess){
         adminService.handleReport(id,isSuccess);
         return Result.ok();
     }
+
+    //处理违规用户
+    @RequestMapping(value = "/handleUser/{id}",method = RequestMethod.PUT)
+    public Result<Object> handleUser(@PathVariable Long id){
+        adminService.handleUser(id);
+        return Result.ok();
+    }
+
+
 
 
 

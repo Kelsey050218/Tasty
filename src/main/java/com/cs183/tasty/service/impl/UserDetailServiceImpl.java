@@ -1,19 +1,20 @@
 package com.cs183.tasty.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cs183.tasty.entity.pojo.LoginUser;
 import com.cs183.tasty.entity.pojo.User;
 import com.cs183.tasty.mapper.MenuMapper;
 import com.cs183.tasty.mapper.UserServiceMapper;
-import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-
+@Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -24,8 +25,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        //TODO: redis分布式锁优化
         //查询数据库中此用户
-        LambdaQueryWrapper wrapper = new LambdaQueryWrapper<User>().eq(User::getUserName, username);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name", username);
         User user = userServiceMapper.selectOne(wrapper);
 
         //判断是否存在

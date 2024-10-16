@@ -15,8 +15,11 @@ public class MessageConstant {
     public static final String UNKNOWN_ERROR = "未知错误";
     public static final String USER_NOT_LOGIN = "用户未登录";
     public static final String LOGIN_FAILED = "登录失败，请重新登录";
+    public static final String FILE_FORMAT_ERROR = "上传文件格式异常";
+    public static final String FILE_ERROR = "文件不存在";
     public static final String PASSWORD_EDIT_FAILED = "密码更改失败，请重新输入";
     public static final String ALL_PERMISSION = "*:*:*";
     public static final String NO_PERMISSION = "您没有该权限";
+    public static final String REDIS_ERROR = "缓存出错";
 
 }

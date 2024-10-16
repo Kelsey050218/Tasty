@@ -16,11 +16,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
-import static com.cs183.tasty.constant.jwtClaimsConstant.USER_ID;
-import static com.cs183.tasty.utils.RedisConstants.LOGIN_USER_KEY;
+import static com.cs183.tasty.constant.RedisConstants.LOGIN_USER_KEY;
 
 @Component
 //OncePerRequestFilter特点是在处理单个HTTP请求时确保过滤器的 doFilterInternal 方法只被调用一次
@@ -32,7 +30,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        //1.在请求头中获取token
+        //在请求头中获取token
         String token = request.getHeader("authorization");
 
         //此处需要判断token是否为空
@@ -42,7 +40,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        //2.解析token获取用户id
+        //解析token获取用户id
         String userId;
         try {
             Claims claims = JwtUtil.parseJWT(token);
@@ -51,18 +49,22 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             //解析失败
             throw new RuntimeException("token非法");
         }
-        //3.在redis中获取用户信息
+        //在redis中获取用户信息
         LoginUser user = (LoginUser) redisTemplate.opsForValue().get(LOGIN_USER_KEY + userId);
 
         //此处需要判断loginUser是否为空
         if (Objects.isNull(user)){
             throw new RuntimeException("用户未登录");
         }
-        //4.将获取到的用户信息存入SecurityContextHolder 参数（用户信息，，权限信息）
+
+        //实现Jwt的自动续期
+
+
+        //将获取到的用户信息存入SecurityContextHolder 参数（用户信息，，权限信息）
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-        //5.放行
+        //放行
         filterChain.doFilter(request,response);
     }
 }

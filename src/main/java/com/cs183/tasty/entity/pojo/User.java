@@ -54,9 +54,10 @@ public class User implements Serializable {
     @TableField(value = "create_time")
     private LocalDateTime createTime;
 
-    //状态 0 为 被封号；1为正常
+    //状态0为正常；1为异常
     @TableField(value = "status")
     private int status;
+
     //用户信息修改时间
     @TableField(value = "update_time")
     private LocalDateTime updateTime;

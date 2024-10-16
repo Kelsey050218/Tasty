@@ -8,20 +8,16 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.cs183.tasty.entity.pojo.User;
-import com.cs183.tasty.mapper.UserServiceMapper;
 import com.cs183.tasty.properties.SmsCodeProperty;
 import com.cs183.tasty.service.SmsService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import static com.cs183.tasty.constant.MessageConstant.*;
-import static com.cs183.tasty.utils.RedisConstants.*;
+import static com.cs183.tasty.constant.RedisConstants.*;
 
 
 @Service
@@ -31,7 +27,7 @@ public class SmsServiceImpl implements SmsService {
     private SmsCodeProperty smsCodeProperty;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
 //    @Override
 //    public void registerVerifyCode(String code, String userCode, String userRegisterDTO) {
@@ -105,7 +101,7 @@ public class SmsServiceImpl implements SmsService {
         SendSmsRequest request = new SendSmsRequest();
         request.setPhoneNumbers(phone);
         request.setSignName(smsCodeProperty.signName);
-        if (redisTemplate.hasKey(VERIFY_CODE)) {
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(VERIFY_CODE))) {
             request.setTemplateCode(smsCodeProperty.templateId_R);
         }
 //        } else if (redisTemplate.hasKey("F_VERIFY_CODE")) {
@@ -113,11 +109,11 @@ public class SmsServiceImpl implements SmsService {
 //        }
         request.setTemplateParam("{\"code\":\"" + code + "\"}");
         request.setTemplateCode(code);
-        redisTemplate.opsForValue().set(VERIFY_CODE, code, VERIFY_CODE_TTL, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(VERIFY_CODE, code, VERIFY_CODE_TTL, TimeUnit.MINUTES);
         SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
         //Check whether the SMS message is successfully sent
         if (sendSmsResponse.getCode() == null) {
-            redisTemplate.delete(VERIFY_CODE);
+            stringRedisTemplate.delete(VERIFY_CODE);
             throw new ClientException("验证码发送失败");
         }
     }

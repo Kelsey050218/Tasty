@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserServiceMapper extends MPJBaseMapper<User> {
+
+
 //    @Select("select * from user where user_name = #{username}")
 //    User getByUserName(String username);
 //    @Insert("insert into `ry-vue`.user "+

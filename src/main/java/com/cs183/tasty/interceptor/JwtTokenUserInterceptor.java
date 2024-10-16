@@ -1,8 +1,6 @@
 package com.cs183.tasty.interceptor;
 
 import com.cs183.tasty.context.BaseContext;
-import com.cs183.tasty.constant.jwtClaimsConstant;
-import com.cs183.tasty.entity.pojo.LoginUser;
 import com.cs183.tasty.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +10,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 @Component
 @Slf4j

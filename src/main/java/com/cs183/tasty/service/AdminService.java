@@ -6,4 +6,6 @@ public interface AdminService {
     void adminRegister(AdminRegisterDTO adminRegisterDTO) throws Exception;
 
     void handleReport(Long id,Integer isSuccess);
+
+    void handleUser(Long id);
 }

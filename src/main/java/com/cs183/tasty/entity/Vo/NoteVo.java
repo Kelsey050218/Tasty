@@ -9,10 +9,16 @@ import java.util.List;
 
 @Data
 public class NoteVo {
+
     private String notePicture;
+
     private String describe;
+
     private Recipe recipe;
+
     private LocalDateTime noteTime;
+
     private List<Comment> comments;
-    private Long likeNum;
+
+    private Integer likeNum;
 }

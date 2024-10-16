@@ -1,8 +1,8 @@
 package com.cs183.tasty.entity.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,22 +13,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Comment implements Serializable {
+@NoArgsConstructor
+@Builder
+@TableName("Response")
+public class Response implements Serializable {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @TableField(value = "note_id")
-    private Long noteId;
+    private Long commentId;
 
-    @TableField(value = "user_id")
     private Long userId;
 
-    @TableField(value = "comment_time")
-    private LocalDateTime commentTime;
+    private String content;
 
-    @TableField(value = "remark")
-    private String remark;
+    private LocalDateTime createdTime;
+
 }
