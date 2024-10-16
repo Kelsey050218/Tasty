@@ -15,15 +15,13 @@ import com.cs183.tasty.mapper.MotivationMapper;
 import com.cs183.tasty.mapper.UserServiceMapper;
 import com.cs183.tasty.service.SmsService;
 import com.cs183.tasty.service.UserService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.github.yulichang.query.MPJQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +41,6 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
 
     @Autowired
     private UserServiceMapper userServiceMapper;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
 
     @Autowired
     private SmsService smsService;
@@ -88,6 +83,9 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
             stringRedisTemplate.delete(VERIFY_CODE);
             User newUser = new User();
             BeanUtils.copyProperties(userRegisterDTO,newUser);
+            String gensalt = BCrypt.gensalt();
+            String saltPassword = BCrypt.hashpw(userRegisterDTO.getPassword(), gensalt);
+            newUser.setPassword(saltPassword);
             newUser.setCreateTime(LocalDateTime.now());
             userServiceMapper.insert(newUser);
             menuMapper.bondUserRole(newUser.getUserId());
@@ -233,16 +231,23 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
             return getUserList(key);
         }else{
             //如果缓存里没有就更新缓存
-            List<User> userList = new ArrayList<>();
             //根据用户id获取粉丝列表
             List<Follow> fansList = followMapper.selectList(Wrappers.lambdaQuery(Follow.class)
                     .eq(Follow::getFollowUserId, id));
-            for (Follow follow : fansList) {
-                User user = userServiceMapper.selectById(follow.getUserId());
-                userList.add(user);
-                //更新缓存
-                stringRedisTemplate.opsForSet().add(key,follow.getUserId().toString());
+            List<Long> fanIds = fansList.stream()
+                    .map(Follow::getUserId)
+                    .toList();
+            List<User> userList = userServiceMapper.selectBatchIds(fanIds);
+            // 更新缓存
+            for (Long fanId : fanIds) {
+                stringRedisTemplate.opsForSet().add(key, fanId.toString());
             }
+//            for (Follow follow : fansList) {
+//                User user = userServiceMapper.selectById(follow.getUserId());
+//                userList.add(user);
+//                //更新缓存
+//                stringRedisTemplate.opsForSet().add(key,follow.getUserId().toString());
+//            }
             return userList;
         }
     }
@@ -260,15 +265,17 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
             return getUserList(key);
         }else{
             //如果缓存里没有就更新缓存
-            List<User> userList = new ArrayList<>();
             //根据用户id获取关注列表
             List<Follow> followList = followMapper.selectList(Wrappers.lambdaQuery(Follow.class)
                     .eq(Follow::getUserId, id));
-            for (Follow follow : followList) {
-                User user = userServiceMapper.selectById(follow.getFollowUserId());
-                userList.add(user);
-                //更新缓存
-                stringRedisTemplate.opsForSet().add(key,follow.getFollowUserId().toString());
+            List<Long> followIds = followList.stream()
+                    .map(Follow::getUserId)
+                    .toList();
+            // 批量查询用户信息
+            List<User> userList = userServiceMapper.selectBatchIds(followIds);
+            // 更新缓存
+            for (Long followId : followIds) {
+                stringRedisTemplate.opsForSet().add(key, followId.toString());
             }
             return userList;
         }
@@ -311,14 +318,19 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
      */
     @Override
     public List<User> conditionSearch(String username, String phone) {
+        String key = SEARCH_RECORD;
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         // 模糊查询用户名
         if (username != null && !username.isEmpty()) {
+            //搜索记录存入redis:zset
+            stringRedisTemplate.opsForZSet().add(key,username,System.currentTimeMillis());
             queryWrapper.like("username", username);
         }
 
         // 查询手机号
         if (phone != null && !phone.isEmpty()) {
+            //搜索记录存入redis:zset
+            stringRedisTemplate.opsForZSet().add(key,phone,System.currentTimeMillis());
             queryWrapper.eq("phone", phone);
         }
         return userServiceMapper.selectList(queryWrapper);
@@ -327,14 +339,8 @@ public class UserServiceImpl extends ServiceImpl<UserServiceMapper, User> implem
 
     //从redis的set集合中获取用户list
     private List<User> getUserList(String key){
-        List<User> userList = new ArrayList<>();
         Set<String> set = stringRedisTemplate.opsForSet().members(key);
         List<String> list = set != null ? set.stream().toList() : List.of();
-        for (String userId : list) {
-            User user = userServiceMapper.selectById(userId);
-            userList.add(user);
-        }
-
-        return userList;
+        return userServiceMapper.selectBatchIds(list);
     }
 }

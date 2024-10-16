@@ -31,7 +31,4 @@ public class Comment implements Serializable {
 
     @TableField(value = "remark")
     private String remark;
-
-    @TableField(exist = false)
-    private List<Response> responses;
 }

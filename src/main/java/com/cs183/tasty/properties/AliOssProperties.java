@@ -14,4 +14,7 @@ public class AliOssProperties {
     private String accessKeySecret;
     private String bucketName;
 
+    // 定义默认的单个文件最大限制 5MB 5MB = 5 * 1024 * 1024 byte
+    public static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+
 }

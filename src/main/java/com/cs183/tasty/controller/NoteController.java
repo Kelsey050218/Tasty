@@ -112,5 +112,12 @@ public class NoteController {
         return Result.ok(responseList);
     }
 
+    //删除评论
+    @RequestMapping(value = "/comment/delete/{id}")
+    public Result<Object> deleteComment(@PathVariable Long id){
+        noteService.deleteComment(id);
+        return Result.ok();
+    }
+
 
 }

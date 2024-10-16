@@ -1,15 +1,19 @@
 server:
   port: 8082
 
-
+#47.96.235.248
 spring:
   datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://47.96.235.248:3306/tasty
+      url: jdbc:mysql://127.0.0.1:3306/tasty
       username: root
-      password: 123456
+      password: '030530'
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   redis:
-    host: 47.96.235.248
+    host: 127.0.0.1
     port: 6379
     database: 1
     lettuce:
@@ -61,6 +65,7 @@ tasty:
     access-key-id: LTAI5tNMJpWgnBYvAYxEebh9
     access-key-secret: dhiVu7S6N6cLyJ5CsksOzxTKJ3cGwl
     bucket-name: kelsey-webdemo
+
 
 
 

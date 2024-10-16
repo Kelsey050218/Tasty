@@ -16,7 +16,7 @@ import java.util.UUID;
 public class JwtUtil {
 
     //设置秘钥明文
-    public static final String JWT_KEY = "tasty";
+    public static final String JWT_KEY = "jwtTasty";
     public static final Long JWT_TTL = 2L;
 
 

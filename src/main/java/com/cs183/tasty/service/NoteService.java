@@ -39,4 +39,6 @@ public interface NoteService {
     void addResponse(Long id, String response);
 
     List<Response> getResponses(Long id);
+
+    void deleteComment(Long id);
 }
