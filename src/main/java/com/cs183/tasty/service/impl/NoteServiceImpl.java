@@ -13,8 +13,6 @@ import com.cs183.tasty.service.NoteService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.yulichang.query.MPJQueryWrapper;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,8 +21,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.cs183.tasty.constant.MessageConstant.NO_PERMISSION;
 import static com.cs183.tasty.constant.RedisConstants.*;

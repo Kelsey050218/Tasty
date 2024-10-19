@@ -66,6 +66,31 @@ LOCK TABLES `comment` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `follow`
+--
+
+DROP TABLE IF EXISTS `follow`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `follow` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint NOT NULL COMMENT '用户id',
+  `follow_user_id` bigint NOT NULL COMMENT '关注的用户',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='关注关系列表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `follow`
+--
+
+LOCK TABLES `follow` WRITE;
+/*!40000 ALTER TABLE `follow` DISABLE KEYS */;
+/*!40000 ALTER TABLE `follow` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `guide`
 --
 
@@ -163,6 +188,7 @@ CREATE TABLE `menu` (
 
 LOCK TABLES `menu` WRITE;
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
+INSERT INTO `menu` VALUES (1,'upload_file','user:upload',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,6 +304,32 @@ LOCK TABLES `report` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Response`
+--
+
+DROP TABLE IF EXISTS `Response`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Response` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `commentId` bigint NOT NULL COMMENT '评论的id标识',
+  `userId` bigint NOT NULL COMMENT '评论者id',
+  `content` varchar(255) DEFAULT NULL COMMENT '评论内容',
+  `createdTime` datetime NOT NULL COMMENT '回复时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='评论回复';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Response`
+--
+
+LOCK TABLES `Response` WRITE;
+/*!40000 ALTER TABLE `Response` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Response` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `role`
 --
 
@@ -326,6 +378,7 @@ CREATE TABLE `role_menu` (
 
 LOCK TABLES `role_menu` WRITE;
 /*!40000 ALTER TABLE `role_menu` DISABLE KEYS */;
+INSERT INTO `role_menu` VALUES (1,1);
 /*!40000 ALTER TABLE `role_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,10 +392,10 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `user_name` varchar(10) NOT NULL COMMENT '用户名',
-  `password` varchar(20) NOT NULL COMMENT '用户密码',
+  `password` varchar(255) NOT NULL COMMENT '用户密码',
   `phone` char(11) NOT NULL COMMENT '电话号码',
   `sex` char(1) DEFAULT NULL COMMENT '性别',
-  `create_time` timestamp NOT NULL COMMENT '注册时间',
+  `create_time` timestamp NULL DEFAULT NULL COMMENT '注册时间',
   `update_time` timestamp NULL DEFAULT NULL COMMENT '修改时间',
   `status` int NOT NULL DEFAULT '1' COMMENT '账号状态',
   `follow` int DEFAULT NULL COMMENT '关注',
@@ -351,8 +404,9 @@ CREATE TABLE `user` (
   `resume` varchar(50) DEFAULT '无' COMMENT '个人简介',
   `portrait` varchar(255) DEFAULT 'https://kelsey-webdemo.oss-cn-hangzhou.aliyuncs.com/6c07d916-8634-4d3a-b4ca-d375991b1571.jpeg' COMMENT '用户头像',
   `place` varchar(255) DEFAULT NULL COMMENT '地区',
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息';
+  PRIMARY KEY (`user_id`),
+  KEY `user_user_name_index` (`user_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=999639469 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,7 +415,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (14,'YouWenXin','030530','18960935500',NULL,'2024-09-23 04:29:44',NULL,0,NULL,NULL,NULL,'无','https://kelsey-webdemo.oss-cn-hangzhou.aliyuncs.com/6c07d916-8634-4d3a-b4ca-d375991b1571.jpeg',NULL);
+INSERT INTO `user` VALUES (14,'YouWenXin','{noop}030530','18960935500',NULL,'2024-09-23 04:29:44',NULL,0,NULL,NULL,NULL,'无','https://kelsey-webdemo.oss-cn-hangzhou.aliyuncs.com/6c07d916-8634-4d3a-b4ca-d375991b1571.jpeg',NULL),(16,'Kelsey','$2a$10$YOx/ROLPRZpztxyhxLr8BuCEViR0rt2z62UGP4vBPxyddpTNKAmJ6','18960935500',NULL,'2024-10-15 03:48:11',NULL,0,NULL,NULL,NULL,'无','https://kelsey-webdemo.oss-cn-hangzhou.aliyuncs.com/6c07d916-8634-4d3a-b4ca-d375991b1571.jpeg',NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,7 +439,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (14,1);
+INSERT INTO `user_role` VALUES (14,1),(15,1),(16,1);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -398,4 +452,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-29 11:26:09
+-- Dump completed on 2024-10-16 19:54:44

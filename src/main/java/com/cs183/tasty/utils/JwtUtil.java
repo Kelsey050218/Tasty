@@ -17,7 +17,7 @@ public class JwtUtil {
 
     //设置秘钥明文
     public static final String JWT_KEY = "jwtTasty";
-    public static final Long JWT_TTL = 2L;
+    public static final Long JWT_TTL = 10 * 60 * 1000L;
 
 
     private static JwtBuilder getJwtBuilder(String subject, Long ttlMillis) {
